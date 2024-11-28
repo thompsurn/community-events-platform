@@ -110,6 +110,60 @@ app.delete('/api/events/:id', async (req, res) => {
       res.status(500).json({ error: 'Failed to delete event' });
     }
   });  
+
+
+// Save an event for a user
+app.post('/api/users/:id/saved-events', async (req, res) => {
+    const { id } = req.params; // User ID
+    const { eventId } = req.body; // Event ID from the request body
+  
+    try {
+      // Check if the event exists
+      const eventCheck = await pool.query('SELECT * FROM events WHERE id = $1', [eventId]);
+      if (eventCheck.rowCount === 0) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+  
+      // Insert into saved_events
+      const result = await pool.query(
+        'INSERT INTO saved_events (user_id, event_id) VALUES ($1, $2) RETURNING *',
+        [id, eventId]
+      );
+  
+      res.status(201).json({ message: 'Event saved successfully', savedEvent: result.rows[0] });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to save event' });
+    }
+  });
+
+// Get all saved events for a user
+app.get('/api/users/:id/saved-events', async (req, res) => {
+    const { id } = req.params; // User ID
+  
+    try {
+      // Fetch all events saved by the user
+      const result = await pool.query(
+        `SELECT events.*
+         FROM saved_events
+         JOIN events ON saved_events.event_id = events.id
+         WHERE saved_events.user_id = $1`,
+        [id]
+      );
+  
+      // Return the list of events or a friendly message if none are found
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: 'No saved events found for this user' });
+      }
+  
+      res.json(result.rows); // Return the list of saved events
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to fetch saved events' });
+    }
+  });
+  
+  
   
 
 // Start the server
