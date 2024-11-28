@@ -1,8 +1,12 @@
 const express = require('express');
+const cors = require('cors'); // Import CORS
 const pool = require('./db'); // Import the database connection
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Apply CORS middleware
+app.use(cors()); // Enable CORS for all requests
 
 app.use(express.json()); // Middleware to parse JSON
 
