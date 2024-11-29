@@ -16,6 +16,20 @@ export const fetchEvents = async () => {
       throw error;
     }
   };
+
+// Fetch saved events for a user
+export const fetchSavedEvents = async (userId) => {
+  const response = await API.get(`/users/${userId}/saved-events`);
+  return response.data;
+};
+
+
+// API Function for Saving Events
+export const saveEvent = async (userId, eventId) => {
+  const response = await API.post(`/users/${userId}/saved-events`, { eventId });
+  return response.data;
+};
+
   
 
 // Export the Axios instance (optional, for advanced use cases)
