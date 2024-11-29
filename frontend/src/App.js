@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { fetchEvents } from './api';
+import LoginPage from './components/LoginPage';
 import SavedEvents from './components/SavedEvents';
 import EventDetails from './components/EventDetails';
+import StaffLogin from './components/StaffLogin';
+import StaffDashboard from './components/StaffDashboard';
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -10,8 +13,8 @@ function App() {
   useEffect(() => {
     const loadEvents = async () => {
       try {
-        const data = await fetchEvents(); // Fetch events from the backend
-        setEvents(data); // Update the state with fetched events
+        const data = await fetchEvents();
+        setEvents(data);
       } catch (error) {
         console.error('Failed to fetch events:', error);
       }
@@ -24,12 +27,16 @@ function App() {
     <Router>
       {/* Navigation Bar */}
       <nav>
-        <Link to="/">Home</Link> | <Link to="/saved-events">Saved Events</Link>
+        <Link to="/">Home</Link> | <Link to="/saved-events">Saved Events</Link> |{' '}
+        <Link to="/staff-login">Staff Login</Link>
       </nav>
 
       {/* Routes */}
       <Routes>
-        {/* Home Page: Displays a list of events */}
+        {/* Default Login Page */}
+        <Route path="/login" element={<LoginPage />} />
+        
+        {/* Home Page */}
         <Route
           path="/"
           element={
@@ -51,6 +58,15 @@ function App() {
 
         {/* Event Details Page */}
         <Route path="/events/:id" element={<EventDetails events={events} />} />
+
+        {/* Staff Login Page */}
+        <Route path="/staff-login" element={<StaffLogin />} />
+
+        {/* Staff Dashboard */}
+        <Route path="/staff-dashboard" element={<StaffDashboard />} />
+
+        {/* Redirect All Unknown Paths to Login */}
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );
