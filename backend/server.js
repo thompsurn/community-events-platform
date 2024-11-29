@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors'); // Import CORS
 const pool = require('./db'); // Import the database connection
+const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -118,28 +119,38 @@ app.delete('/api/events/:id', async (req, res) => {
 
 // Save an event for a user
 app.post('/api/users/:id/saved-events', async (req, res) => {
-    const { id } = req.params; // User ID
-    const { eventId } = req.body; // Event ID from the request body
-  
-    try {
-      // Check if the event exists
-      const eventCheck = await pool.query('SELECT * FROM events WHERE id = $1', [eventId]);
-      if (eventCheck.rowCount === 0) {
-        return res.status(404).json({ error: 'Event not found' });
-      }
-  
-      // Insert into saved_events
-      const result = await pool.query(
-        'INSERT INTO saved_events (user_id, event_id) VALUES ($1, $2) RETURNING *',
-        [id, eventId]
-      );
-  
-      res.status(201).json({ message: 'Event saved successfully', savedEvent: result.rows[0] });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Failed to save event' });
+  const { id } = req.params; // User ID
+  const { eventId } = req.body; // Event ID from the request body
+
+  try {
+    // Check if the event exists
+    const eventCheck = await pool.query('SELECT * FROM events WHERE id = $1', [eventId]);
+    if (eventCheck.rowCount === 0) {
+      return res.status(404).json({ error: 'Event not found' });
     }
-  });
+
+    // Check if the event is already saved by the user
+    const savedEventCheck = await pool.query(
+      'SELECT * FROM saved_events WHERE user_id = $1 AND event_id = $2',
+      [id, eventId]
+    );
+
+    if (savedEventCheck.rowCount > 0) {
+      return res.status(400).json({ error: 'Event already saved' });
+    }
+
+    // Insert into saved_events
+    const result = await pool.query(
+      'INSERT INTO saved_events (user_id, event_id) VALUES ($1, $2) RETURNING *',
+      [id, eventId]
+    );
+
+    res.status(201).json({ message: 'Event saved successfully', savedEvent: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to save event' });
+  }
+});
 
 // Get all saved events for a user
 app.get('/api/users/:id/saved-events', async (req, res) => {
@@ -168,6 +179,37 @@ app.get('/api/users/:id/saved-events', async (req, res) => {
   });
   
   
+  // Staff login
+app.post('/api/staff/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Check if the staff user exists
+    const result = await pool.query(
+      'SELECT * FROM users WHERE username = $1 AND role = $2',
+      [username, 'staff']
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const staff = result.rows[0];
+
+    // Check if the password matches
+    const passwordMatch = await bcrypt.compare(password, staff.password_hash);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    res.status(200).json({ message: 'Login successful', staffId: staff.id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to log in' });
+  }
+});
+
   
 
 // Start the server
