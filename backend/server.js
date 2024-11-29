@@ -20,7 +20,9 @@ app.get('/', (req, res) => {
 // Fetch all events
 app.get('/api/events', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM events');
+    const result = await pool.query(
+      'SELECT * FROM events ORDER BY date ASC, id ASC'
+    );
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'No events found' });
     }
@@ -30,6 +32,7 @@ app.get('/api/events', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch events' });
   }
 });
+
 
 // Add a new event
 app.post('/api/events', async (req, res) => {
