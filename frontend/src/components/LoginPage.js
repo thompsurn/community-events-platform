@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 function LoginPage() {
@@ -10,10 +10,10 @@ function LoginPage() {
 
   const handleSignIn = async () => {
     try {
-        await axios.post('http://localhost:5000/api/login', {
-            username,
-            password,
-          });
+      await axios.post('http://localhost:5000/api/login', {
+        username,
+        password,
+      });
 
       // Redirect to homepage after successful login
       navigate('/');
@@ -49,9 +49,9 @@ function LoginPage() {
           Create Account
         </button>
         <p>
-          <a href="/staff-login" style={styles.link}>
+          <Link to="/staff-login" style={styles.link}>
             Click here to go to staff sign in
-          </a>
+          </Link>
         </p>
       </div>
       {error && <p style={styles.error}>{error}</p>}
