@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { fetchSavedEvents } from '../api'; // Assuming your API helper file is in src/api.js
+import { fetchSavedEvents } from '../api';
+import '../styles/styles.css';
 
 function SavedEvents() {
   const [savedEvents, setSavedEvents] = useState([]);
@@ -20,24 +21,31 @@ function SavedEvents() {
   }, []);
 
   if (error) {
-    return <p>{error}</p>;
+    return <p className="error-message">{error}</p>;
   }
 
   if (savedEvents.length === 0) {
-    return <p>No saved events yet. Go sign up for some events!</p>;
+    return (
+      <div className="page-container">
+        <h1 className="page-title">Saved Events</h1>
+        <p>No saved events yet. Go sign up for some events!</p>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h1>Saved Events</h1>
-      <ul>
+    <div className="page-container">
+      <h1 className="page-title">Saved Events</h1>
+      <ul className="event-list">
         {savedEvents.map((event) => (
-          <li key={event.id}>
-            <h2>{event.title}</h2>
-            <p>{event.description}</p>
-            <p>Date: {event.date}</p>
-            <p>Location: {event.location}</p>
-            <p>Price: {event.price === 0 ? 'Free' : `£${event.price}`}</p>
+          <li key={event.id} className="event-card">
+            <h2 className="event-title">{event.title}</h2>
+            <p className="event-details">{event.description}</p>
+            <p className="event-details">Date: {new Date(event.date).toLocaleDateString()}</p>
+            <p className="event-details">Location: {event.location}</p>
+            <p className="event-price">
+              {event.price === 0 ? 'Free' : `£${event.price}`}
+            </p>
           </li>
         ))}
       </ul>

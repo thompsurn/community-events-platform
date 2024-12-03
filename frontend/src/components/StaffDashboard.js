@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import '../styles/styles.css';
 
 function StaffDashboard() {
   const [events, setEvents] = useState([]);
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    description: '',
+    date: '',
+    location: '',
+    price: '',
+  });
   const [error, setError] = useState('');
-  const [editingEvent, setEditingEvent] = useState(null); // Track the event being edited
   const [successMessage, setSuccessMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -21,59 +30,39 @@ function StaffDashboard() {
     fetchEvents();
   }, []);
 
-  const formatDateForDisplay = (dateString) => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
-  const parseDateForBackend = (dateString) => {
-    const [day, month, year] = dateString.split('/');
-    return `${year}-${month}-${day}`;
-  };
-
-  const handleEditClick = (event) => {
-    setEditingEvent({
-      ...event,
-      date: formatDateForDisplay(event.date), // Format date for display
-    });
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditingEvent((prev) => ({
+    setNewEvent((prev) => ({
       ...prev,
-      [name]: name === 'price' ? (value === '' ? '' : parseFloat(value)) : value,
+      [name]: value,
     }));
   };
 
-  const handleUpdateEvent = async () => {
+  const handleAddEvent = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccessMessage('');
     try {
-      const updatedEvent = {
-        ...editingEvent,
-        date: parseDateForBackend(editingEvent.date), // Parse date back to yyyy-mm-dd
-      };
-      const response = await axios.patch(
-        `http://localhost:5000/api/events/${editingEvent.id}`,
-        updatedEvent
-      );
-      setEvents((prev) =>
-        prev.map((event) => (event.id === editingEvent.id ? response.data : event))
-      );
-      setEditingEvent(null); // Exit editing mode
-      setSuccessMessage('Event updated successfully!');
+      const response = await axios.post('http://localhost:5000/api/events', newEvent);
+      setEvents((prev) => [...prev, response.data]);
+      setNewEvent({
+        title: '',
+        description: '',
+        date: '',
+        location: '',
+        price: '',
+      });
+      setSuccessMessage('Event added successfully!');
     } catch (err) {
       console.error(err);
-      setError('Failed to update event.');
+      setError('Failed to add event. Please try again.');
     }
   };
 
   const handleDeleteEvent = async (id) => {
     try {
-        await axios.delete(`http://localhost:5000/api/events/${id}`);
-        setEvents((prev) => prev.filter((event) => event.id !== id)); // Remove the deleted event from the list
+      await axios.delete(`http://localhost:5000/api/events/${id}`);
+      setEvents((prev) => prev.filter((event) => event.id !== id));
       setSuccessMessage('Event deleted successfully!');
     } catch (err) {
       console.error(err);
@@ -81,100 +70,106 @@ function StaffDashboard() {
     }
   };
 
+  const handleEditEvent = (id) => {
+    navigate(`/events/${id}/edit`); // Navigate to the specific event page with editing options
+  };
+
+  const handleViewEvent = (id) => {
+    navigate(`/events/${id}`);
+  };
+
   return (
-    <div style={styles.container}>
-      <h1>Staff Dashboard</h1>
-      <p>Welcome! Here you can manage your events.</p>
+    <div className="page-container">
+      <h1 className="page-title">Staff Dashboard</h1>
+      {error && <p className="error-message">{error}</p>}
+      {successMessage && <p className="success-message">{successMessage}</p>}
 
-      {error && <p style={styles.error}>{error}</p>}
-      {successMessage && <p style={styles.success}>{successMessage}</p>}
+      {/* Add Event Form */}
+      <div className="add-event-form">
+        <h2 className="form-title">Add New Event</h2>
+        <form onSubmit={handleAddEvent} className="form-group">
+          <input
+            type="text"
+            name="title"
+            value={newEvent.title}
+            onChange={handleInputChange}
+            placeholder="Event Title"
+            required
+            className="form-input"
+          />
+          <textarea
+            name="description"
+            value={newEvent.description}
+            onChange={handleInputChange}
+            placeholder="Event Description"
+            required
+            className="form-input"
+          />
+          <input
+            type="date"
+            name="date"
+            value={newEvent.date}
+            onChange={handleInputChange}
+            required
+            className="form-input"
+          />
+          <input
+            type="text"
+            name="location"
+            value={newEvent.location}
+            onChange={handleInputChange}
+            placeholder="Event Location"
+            required
+            className="form-input"
+          />
+          <input
+            type="number"
+            name="price"
+            value={newEvent.price}
+            onChange={handleInputChange}
+            placeholder="Event Price (£)"
+            required
+            className="form-input"
+          />
+          <button type="submit" className="add-event-button">
+            Add Event
+          </button>
+        </form>
+      </div>
 
-      <ul style={styles.eventList}>
+      {/* Event List */}
+      <ul className="event-list">
         {events.map((event) => (
-          <li key={event.id} style={styles.eventItem}>
-            {editingEvent && editingEvent.id === event.id ? (
-              <div style={styles.form}>
-                <input
-                  type="text"
-                  name="title"
-                  value={editingEvent.title}
-                  onChange={handleInputChange}
-                  style={styles.input}
-                />
-                <input
-                  type="text"
-                  name="description"
-                  value={editingEvent.description}
-                  onChange={handleInputChange}
-                  style={styles.input}
-                />
-                <input
-                  type="text"
-                  name="date"
-                  value={editingEvent.date}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setEditingEvent((prev) => ({
-                      ...prev,
-                      date: value, // Update the displayed date
-                    }));
-                  }}
-                  style={styles.input}
-                />
-                <input
-                  type="text"
-                  name="location"
-                  value={editingEvent.location}
-                  onChange={handleInputChange}
-                  style={styles.input}
-                />
-                <input
-                  type="number"
-                  name="price"
-                  value={editingEvent.price}
-                  onChange={handleInputChange}
-                  style={styles.input}
-                />
-                <button onClick={handleUpdateEvent} style={styles.button}>
-                  Save Changes
-                </button>
-                <button onClick={() => setEditingEvent(null)} style={styles.cancelButton}>
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <div>
-                <h3>{event.title}</h3>
-                <p>{event.description}</p>
-                <p>Date: {formatDateForDisplay(event.date)}</p>
-                <p>Location: {event.location}</p>
-                <p>Price: £{event.price}</p>
-                <button onClick={() => handleEditClick(event)} style={styles.button}>
-                  Edit
-                </button>
-                <button onClick={() => handleDeleteEvent(event.id)} style={styles.deleteButton}>
-                  Delete
-                </button>
-              </div>
-            )}
+          <li key={event.id} className="event-card">
+            <h3 className="event-title">{event.title}</h3>
+            <p className="event-details">{event.description}</p>
+            <p className="event-details">Date: {event.date}</p>
+            <p className="event-details">Location: {event.location}</p>
+            <div className="event-actions">
+              <button
+                onClick={() => handleViewEvent(event.id)}
+                className="button"
+              >
+                View Details
+              </button>
+              <button
+                onClick={() => handleEditEvent(event.id)}
+                className="button-secondary"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteEvent(event.id)}
+                className="button-secondary"
+              >
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
     </div>
   );
 }
-
-const styles = {
-  container: { textAlign: 'center', marginTop: '30px' },
-  error: { color: 'red' },
-  success: { color: 'green' },
-  form: { textAlign: 'left', display: 'inline-block', marginBottom: '30px' },
-  input: { display: 'block', margin: '10px 0', padding: '10px', width: '100%' },
-  button: { margin: '10px 0', padding: '10px 20px', cursor: 'pointer' },
-  cancelButton: { margin: '10px 0', padding: '10px 20px', cursor: 'pointer', backgroundColor: 'red', color: 'white' },
-  deleteButton: { margin: '10px 0', padding: '10px 20px', cursor: 'pointer', backgroundColor: 'red', color: 'white' },
-  eventList: { listStyleType: 'none', padding: 0 },
-  eventItem: { marginBottom: '20px', padding: '10px', border: '1px solid #ccc' },
-};
 
 export default StaffDashboard;

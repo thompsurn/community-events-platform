@@ -4,8 +4,10 @@ import { fetchEvents } from './api';
 import LoginPage from './components/LoginPage';
 import SavedEvents from './components/SavedEvents';
 import EventDetails from './components/EventDetails';
+import EditEvent from './components/EditEvent'; // New component for editing events
 import StaffLogin from './components/StaffLogin';
 import StaffDashboard from './components/StaffDashboard';
+import './styles/styles.css';
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -26,29 +28,59 @@ function App() {
   return (
     <Router>
       {/* Navigation Bar */}
-      <nav>
-        <Link to="/">Home</Link> | <Link to="/saved-events">Saved Events</Link> |{' '}
-        <Link to="/staff-login">Staff Login</Link>
+      <nav className="nav-bar">
+        <ul className="nav-list">
+          <li>
+            <Link to="/" className="nav-link">Home</Link>
+          </li>
+          <li>
+            <Link to="/saved-events" className="nav-link">Saved Events</Link>
+          </li>
+          <li>
+            <Link to="/staff-login" className="nav-link">Staff Login</Link>
+          </li>
+        </ul>
       </nav>
 
       {/* Routes */}
       <Routes>
         {/* Default Login Page */}
         <Route path="/login" element={<LoginPage />} />
-        
+
         {/* Home Page */}
         <Route
           path="/"
           element={
-            <div>
-              <h1>Upcoming Events</h1>
-              <ul>
-                {events.map((event) => (
-                  <li key={event.id}>
-                    <Link to={`/events/${event.id}`}>{event.title}</Link>
-                  </li>
+            <div className="homepage">
+              <h1 className="page-title">Upcoming Events</h1>
+              <div>
+                {groupEventsByMonth(events).map(({ month, events }) => (
+                  <div key={month} className="month-group">
+                    <h2 className="month-heading">{month}</h2>
+                    <ul className="event-list">
+                      {events.map((event) => (
+                        <li key={event.id} className="event-card-homepage">
+                          <div className="event-date-homepage">
+                            <span className="day">
+                              {new Date(event.date).toLocaleDateString('en-GB', { weekday: 'short' })}
+                            </span>
+                            <span className="date">
+                              {new Date(event.date).getDate()}
+                            </span>
+                          </div>
+                          <div className="event-details-homepage">
+                            <h3 className="event-title-homepage">{event.title}</h3>
+                            <p className="event-location-homepage">{event.location}</p>
+                            <Link to={`/events/${event.id}`} className="event-link">
+                              View Details
+                            </Link>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           }
         />
@@ -58,6 +90,9 @@ function App() {
 
         {/* Event Details Page */}
         <Route path="/events/:id" element={<EventDetails events={events} />} />
+
+        {/* Event Edit Page */}
+        <Route path="/events/:id/edit" element={<EditEvent />} />
 
         {/* Staff Login Page */}
         <Route path="/staff-login" element={<StaffLogin />} />
@@ -70,6 +105,19 @@ function App() {
       </Routes>
     </Router>
   );
+}
+
+/* Helper Function: Group Events by Month */
+function groupEventsByMonth(events) {
+  const grouped = events.reduce((acc, event) => {
+    const eventDate = new Date(event.date);
+    const month = eventDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
+    if (!acc[month]) acc[month] = [];
+    acc[month].push(event);
+    return acc;
+  }, {});
+
+  return Object.entries(grouped).map(([month, events]) => ({ month, events }));
 }
 
 export default App;

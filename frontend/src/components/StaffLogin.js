@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../styles/styles.css';
 
 function StaffLogin() {
   const [username, setUsername] = useState('');
@@ -10,14 +11,10 @@ function StaffLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(''); // Clear previous errors
+    setError('');
     try {
-      const response = await axios.post('http://localhost:5000/api/staff/login', {
-        username,
-        password,
-      });
-      console.log('Login successful:', response.data);
-      navigate('/staff-dashboard'); // Redirect to the staff dashboard
+      await axios.post('http://localhost:5000/api/staff/login', { username, password });
+      navigate('/staff-dashboard');
     } catch (err) {
       console.error('Login failed:', err);
       setError('Invalid username or password');
@@ -25,38 +22,30 @@ function StaffLogin() {
   };
 
   return (
-    <div style={styles.container}>
-      <h1>Staff Login</h1>
-      <form onSubmit={handleLogin} style={styles.form}>
+    <div className="staff-login-container">
+      <h1 className="staff-login-title">Staff Login</h1>
+      <form onSubmit={handleLogin} className="staff-login-form">
         <input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          style={styles.input}
+          className="staff-login-input"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
+          className="staff-login-input"
         />
-        <button type="submit" style={styles.button}>
+        <button type="submit" className="staff-login-button">
           Login
         </button>
       </form>
-      {error && <p style={styles.error}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }
-
-const styles = {
-  container: { textAlign: 'center', marginTop: '50px' },
-  form: { display: 'inline-block', textAlign: 'left' },
-  input: { display: 'block', margin: '10px 0', padding: '10px', width: '300px' },
-  button: { padding: '10px 20px', cursor: 'pointer', marginTop: '10px' },
-  error: { color: 'red', marginTop: '10px' },
-};
 
 export default StaffLogin;
