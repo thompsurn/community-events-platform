@@ -19,16 +19,60 @@ export const fetchEvents = async () => {
 
 // Fetch saved events for a user
 export const fetchSavedEvents = async (userId) => {
-  const response = await API.get(`/users/${userId}/saved-events`);
-  return response.data;
+  const token = localStorage.getItem('token'); // Get the JWT token
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  return axios.get(`http://localhost:5000/api/users/${userId}/saved-events`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
+
+
 
 
 // API Function for Saving Events
 export const saveEvent = async (userId, eventId) => {
-  const response = await API.post(`/users/${userId}/saved-events`, { eventId });
-  return response.data;
+  const token = localStorage.getItem('token'); // Get token from localStorage
+  if (!token) {
+    throw new Error('No token found'); // Ensure a token exists
+  }
+
+  try {
+    const response = await API.post(
+      `/users/${userId}/saved-events`, // Correctly use the baseURL from Axios instance
+      { eventId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Add the token in the Authorization header
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error saving event:', error.response || error.message);
+    throw error;
+  }
 };
+
+// API Function for Removing a Saved Event
+export const removeSavedEvent = async (userId, eventId) => {
+  const token = localStorage.getItem('token'); // Get token from localStorage
+  if (!token) {
+    throw new Error('No token found'); // Ensure a token exists
+  }
+
+  return axios.delete(`http://localhost:5000/api/users/${userId}/saved-events/${eventId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Add the token in the Authorization header
+    },
+  });
+};
+
+
 
   
 

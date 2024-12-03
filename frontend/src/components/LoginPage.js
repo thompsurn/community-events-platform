@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import axios from 'axios';
 import '../styles/styles.css';
 
@@ -8,15 +9,14 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSignIn = async () => {
     try {
-      await axios.post('http://localhost:5000/api/login', {
-        username,
-        password,
-      });
-
-      navigate('/'); // Redirect to homepage after successful login
+      const response = await axios.post('http://localhost:5000/api/login', { username, password });
+      const { token } = response.data;
+      login(token); // Use the context login function
+      navigate('/');
     } catch (err) {
       console.error(err);
       setError('Invalid username or password');
@@ -26,7 +26,6 @@ function LoginPage() {
   return (
     <div className="container">
       <h1>Welcome to Community Events!</h1>
-      <p>Find out about what events are coming up near you!</p>
       <div className="form">
         <input
           type="text"
@@ -42,17 +41,8 @@ function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           className="input"
         />
-        <button onClick={handleSignIn} className="button">
-          Sign In
-        </button>
-        <button onClick={() => navigate('/create-account')} className="button">
-          Create Account
-        </button>
-        <p>
-          <Link to="/staff-login" className="link">
-            Click here to go to staff sign in
-          </Link>
-        </p>
+        <button onClick={handleSignIn} className="button">Sign In</button>
+        <Link to="/create-account" className="link">Create an account</Link>
       </div>
       {error && <p className="error">{error}</p>}
     </div>

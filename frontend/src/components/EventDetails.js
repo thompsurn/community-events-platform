@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useAuth } from '../AuthContext'; // Import AuthContext to access logged-in user
 import { saveEvent } from '../api';
 import '../styles/styles.css';
 
 function EventDetails({ events }) {
   const { id } = useParams(); // Get event ID from the URL
+  const { user } = useAuth(); // Get logged-in user details
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const event = events.find((e) => e.id === Number(id)); // Find event by ID
 
   if (!event) {
@@ -13,15 +16,23 @@ function EventDetails({ events }) {
   }
 
   const handleSignup = async () => {
+    if (!user) {
+      setError('You must be logged in to save events.');
+      return;
+    }
+
     try {
-      await saveEvent(1, event.id); // Replace '1' with actual user ID
+      await saveEvent(user.id, event.id); // Use the logged-in user's ID
       setMessage('Event successfully added to your saved events page!');
+      setError(''); // Clear any previous error
     } catch (err) {
       console.error('Error signing up for event:', err);
       if (err.response && err.response.status === 400) {
-        setMessage('You’ve already signed up for this event!');
+        setError('You’ve already signed up for this event!');
+      } else if (err.response && err.response.status === 401) {
+        setError('Unauthorized. Please log in and try again.');
       } else {
-        setMessage('Failed to save event. Please try again.');
+        setError('Failed to save event. Please try again.');
       }
     }
   };
@@ -68,6 +79,7 @@ function EventDetails({ events }) {
           </a>
         </div>
       )}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }

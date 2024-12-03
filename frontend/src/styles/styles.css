@@ -487,6 +487,22 @@ nav a:hover {
   background: linear-gradient(90deg, #007bff, #0056b3);
 }
 
+/* Password */
+
+.password-strength {
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.password-strength.strong {
+  color: green;
+}
+
+.password-strength.weak {
+  color: red;
+}
+
+
 @media (min-width: 768px) {
   .staff-login-form {
     flex-direction: column;
@@ -501,6 +517,72 @@ nav a:hover {
   }
 }
 
+
+/* Saved events cards */
+
+.event-card {
+  display: flex; /* Flex layout for horizontal alignment */
+  align-items: center; /* Vertically center-align date and details */
+  justify-content: space-between; /* Ensure space between sections */
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.event-date {
+  flex-shrink: 0; /* Prevent the date container from shrinking */
+  text-align: center;
+  margin-right: 16px; /* Add spacing between date and details */
+}
+
+.event-date .day {
+  font-size: 14px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.event-date .date {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.event-details {
+  flex-grow: 1; /* Allow details to take remaining space */
+}
+
+.event-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.event-location {
+  font-size: 14px;
+  color: #666;
+}
+
+.event-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px; /* Add spacing between action buttons/links */
+}
+
+.remove-event-button {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.remove-event-button:hover {
+  background-color: #c82333;
+}
 
 
 

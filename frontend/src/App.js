@@ -4,13 +4,16 @@ import { fetchEvents } from './api';
 import LoginPage from './components/LoginPage';
 import SavedEvents from './components/SavedEvents';
 import EventDetails from './components/EventDetails';
-import EditEvent from './components/EditEvent'; // New component for editing events
+import EditEvent from './components/EditEvent';
 import StaffLogin from './components/StaffLogin';
 import StaffDashboard from './components/StaffDashboard';
+import CreateAccount from './components/CreateAccount'; // New component for account creation
+import { useAuth } from './AuthContext'; // Use AuthContext for authentication
 import './styles/styles.css';
 
 function App() {
   const [events, setEvents] = useState([]);
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -21,7 +24,6 @@ function App() {
         console.error('Failed to fetch events:', error);
       }
     };
-
     loadEvents();
   }, []);
 
@@ -34,20 +36,26 @@ function App() {
             <Link to="/" className="nav-link">Home</Link>
           </li>
           <li>
-            <Link to="/saved-events" className="nav-link">Saved Events</Link>
+            {user ? (
+              <Link to="/saved-events" className="nav-link">Saved Events</Link>
+            ) : (
+              <Link to="/login" className="nav-link">Login</Link>
+            )}
           </li>
-          <li>
-            <Link to="/staff-login" className="nav-link">Staff Login</Link>
-          </li>
+          {user && user.role === 'staff' && (
+            <li>
+              <Link to="/staff-dashboard" className="nav-link">Staff Dashboard</Link>
+            </li>
+          )}
         </ul>
       </nav>
 
       {/* Routes */}
       <Routes>
-        {/* Default Login Page */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/staff-login" element={<StaffLogin />} />
+        <Route path="/create-account" element={<CreateAccount />} />
 
-        {/* Home Page */}
         <Route
           path="/"
           element={
@@ -85,29 +93,26 @@ function App() {
           }
         />
 
-        {/* Saved Events Page */}
-        <Route path="/saved-events" element={<SavedEvents />} />
-
-        {/* Event Details Page */}
-        <Route path="/events/:id" element={<EventDetails events={events} />} />
-
-        {/* Event Edit Page */}
-        <Route path="/events/:id/edit" element={<EditEvent />} />
-
-        {/* Staff Login Page */}
-        <Route path="/staff-login" element={<StaffLogin />} />
-
-        {/* Staff Dashboard */}
-        <Route path="/staff-dashboard" element={<StaffDashboard />} />
-
-        {/* Redirect All Unknown Paths to Login */}
+        <Route path="/saved-events" element={user ? <SavedEvents /> : <Navigate to="/login" />} />
+        <Route
+          path="/events/:id"
+          element={user ? <EventDetails events={events} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/events/:id/edit"
+          element={user && user.role === 'staff' ? <EditEvent /> : <Navigate to="/staff-login" />}
+        />
+        <Route
+          path="/staff-dashboard"
+          element={user && user.role === 'staff' ? <StaffDashboard /> : <Navigate to="/staff-login" />}
+        />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );
 }
 
-/* Helper Function: Group Events by Month */
+// Helper Function: Group Events by Month
 function groupEventsByMonth(events) {
   const grouped = events.reduce((acc, event) => {
     const eventDate = new Date(event.date);
