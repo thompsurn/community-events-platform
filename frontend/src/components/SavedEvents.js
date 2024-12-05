@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchSavedEvents, removeSavedEvent } from '../api';
 import '../styles/styles.css';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../AuthContext'; // Ensure you import the user's context
 import { createGoogleCalendarLink } from '../utils';
 
@@ -96,35 +95,37 @@ function SavedEvents() {
           <h2 className="month-heading">{month}</h2>
           <ul className="event-list">
             {events.map((event) => (
-              <li key={event.id} className="event-card-homepage">
-                <div className="event-date-homepage">
-                  <span className="day">
-                    {new Date(event.date).toLocaleDateString('en-GB', { weekday: 'short' })}
+              <li key={event.id} className="saved-event-card">
+                <div className="saved-event-date">
+                  <span className="saved-event-day">
+                    {new Date(event.date).toLocaleDateString('en-GB', { weekday: 'short' }).toUpperCase()}
                   </span>
-                  <span className="date">
+                  <span className="saved-event-date-number">
                     {new Date(event.date).getDate()}
                   </span>
                 </div>
-                <div className="event-details-homepage">
-                  <h3 className="event-title-homepage">{event.title}</h3>
-                  <p className="event-location-homepage">{event.location}</p>
-                  <Link to={`/events/${event.id}`} className="event-link">
-                    View Details
-                  </Link>
-                  <a
-                    href={createGoogleCalendarLink(event)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="google-calendar-link"
-                  >
-                    Add to Google Calendar
-                  </a>
-                  <button
-                    onClick={() => handleRemoveEvent(event.id)}
-                    className="remove-event-button"
-                  >
-                    Remove Event
-                  </button>
+                <div className="saved-event-info">
+                  <h3 className="saved-event-title">{event.title}</h3>
+                  <p className="saved-event-location">{event.location}</p>
+                  <div className='saved-event-links'>
+                    <a href={`/events/${event.id}`} className="saved-event-details-link">
+                        View Details
+                    </a>
+                    <a
+                        href={createGoogleCalendarLink(event)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="saved-event-calendar-link"
+                    >
+                        Add to Google Calendar
+                    </a>
+                    <button
+                        onClick={() => handleRemoveEvent(event.id)}
+                        className="saved-event-remove-button"
+                    >
+                        Remove Event
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}
@@ -133,6 +134,7 @@ function SavedEvents() {
       ))}
     </div>
   );
+  
 }
 
 export default SavedEvents;

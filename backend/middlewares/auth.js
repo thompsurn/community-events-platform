@@ -26,4 +26,12 @@ const generateToken = (userId) => {
   return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '1h' });
 };
 
-module.exports = { verifyToken, generateToken };
+const verifyStaff = (req, res, next) => {
+  if (req.user.role !== 'staff') {
+    return res.status(403).json({ error: 'Access denied. Staff only.' });
+  }
+  next();
+};
+
+module.exports = { verifyToken, generateToken, verifyStaff };
+

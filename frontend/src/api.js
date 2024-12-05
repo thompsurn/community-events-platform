@@ -72,6 +72,23 @@ export const removeSavedEvent = async (userId, eventId) => {
   });
 };
 
+// API function for staff login
+export const staffLogin = async (username, password) => {
+  console.log('Attempting login with:', { username, password }); // Debug: Request payload
+  try {
+    const response = await axios.post('http://localhost:5000/api/staff/login', {
+      username,
+      password,
+    });
+    console.log('Login response from server:', response.data); // Debug: Response from server
+    return response.data; // Return the server's response (e.g., token)
+  } catch (err) {
+    console.error('Error during staff login:', err.response || err.message); // Debug: Error details
+    throw err; // Rethrow the error for frontend handling
+  }
+};
+
+
 
 
   

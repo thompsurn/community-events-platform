@@ -5,15 +5,16 @@ import LoginPage from './components/LoginPage';
 import SavedEvents from './components/SavedEvents';
 import EventDetails from './components/EventDetails';
 import EditEvent from './components/EditEvent';
-import StaffLogin from './components/StaffLogin';
+import StaffLoginPage from './components/StaffLoginPage';
 import StaffDashboard from './components/StaffDashboard';
-import CreateAccount from './components/CreateAccount'; // New component for account creation
-import { useAuth } from './AuthContext'; // Use AuthContext for authentication
+import CreateAccount from './components/CreateAccount';
+import ProtectedRoute from './components/ProtectedRoute';
+import { useAuth } from './AuthContext';
 import './styles/styles.css';
 
 function App() {
   const [events, setEvents] = useState([]);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -27,9 +28,29 @@ function App() {
     loadEvents();
   }, []);
 
+  const handleLogout = () => {
+    logout();
+    if (user?.role === 'staff') {
+      window.location.href = '/staff-login';
+    } else {
+      window.location.href = '/login';
+    }
+  };
+
+  const groupEventsByMonth = (events) => {
+    const grouped = events.reduce((acc, event) => {
+      const eventDate = new Date(event.date);
+      const month = eventDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
+      if (!acc[month]) acc[month] = [];
+      acc[month].push(event);
+      return acc;
+    }, {});
+
+    return Object.entries(grouped).map(([month, events]) => ({ month, events }));
+  };
+
   return (
     <Router>
-      {/* Navigation Bar */}
       <nav className="nav-bar">
         <ul className="nav-list">
           <li>
@@ -47,15 +68,50 @@ function App() {
               <Link to="/staff-dashboard" className="nav-link">Staff Dashboard</Link>
             </li>
           )}
+          {user && (
+            <li>
+              <button onClick={handleLogout} className="nav-link logout-button">Logout</button>
+            </li>
+          )}
         </ul>
       </nav>
 
-      {/* Routes */}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/staff-login" element={<StaffLogin />} />
+        <Route path="/staff-login" element={<StaffLoginPage />} />
         <Route path="/create-account" element={<CreateAccount />} />
-
+        <Route
+          path="/staff-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['staff']}>
+              <StaffDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/saved-events"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'staff']}>
+              <SavedEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/events/:id"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'staff']}>
+              <EventDetails events={events} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/events/:id/edit"
+          element={
+            <ProtectedRoute allowedRoles={['staff']}>
+              <EditEvent />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/"
           element={
@@ -92,37 +148,10 @@ function App() {
             </div>
           }
         />
-
-        <Route path="/saved-events" element={user ? <SavedEvents /> : <Navigate to="/login" />} />
-        <Route
-          path="/events/:id"
-          element={user ? <EventDetails events={events} /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/events/:id/edit"
-          element={user && user.role === 'staff' ? <EditEvent /> : <Navigate to="/staff-login" />}
-        />
-        <Route
-          path="/staff-dashboard"
-          element={user && user.role === 'staff' ? <StaffDashboard /> : <Navigate to="/staff-login" />}
-        />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );
-}
-
-// Helper Function: Group Events by Month
-function groupEventsByMonth(events) {
-  const grouped = events.reduce((acc, event) => {
-    const eventDate = new Date(event.date);
-    const month = eventDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
-    if (!acc[month]) acc[month] = [];
-    acc[month].push(event);
-    return acc;
-  }, {});
-
-  return Object.entries(grouped).map(([month, events]) => ({ month, events }));
 }
 
 export default App;

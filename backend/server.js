@@ -2,11 +2,26 @@ const express = require('express');
 const cors = require('cors'); // Import CORS
 const pool = require('./db'); // Import the database connection
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); // Import JWT
 const { verifyToken, generateToken } = require('./middlewares/auth'); // Use modularized auth functions
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+
+// Debugging endpoint for database connection
+app.get('/api/debug-users', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM users');
+    console.log('Users Table:', result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error querying users table:', err);
+    res.status(500).send('Error querying users table');
+  }
+});
+
 
 // Apply Middleware
 app.use(cors()); // Enable CORS for all requests
@@ -72,14 +87,71 @@ app.post('/api/login', async (req, res) => {
     }
 
     // Generate a JWT token
-    const token = generateToken(user.id);
-
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+    
     res.json({ message: 'Login successful', token });
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).json({ error: 'Failed to log in' });
   }
 });
+
+// Staff Login Endpoint
+app.post('/api/staff/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  console.log('Attempting login for user:', username);
+  console.log('Expected role:', 'staff');
+
+  try {
+    // Debug: Print all users before querying
+    const allUsers = await pool.query('SELECT * FROM public.users');
+    console.log('All Users in Table:', allUsers.rows);
+
+    // Debug: Log the exact query being executed
+    const query = 'SELECT * FROM public.users WHERE LOWER(username) = LOWER($1) AND LOWER(role) = LOWER($2)';
+    const queryValues = [username, 'staff'];
+    console.log('Executing Query:', query, 'Values:', queryValues);
+
+    const result = await pool.query(query, queryValues);
+
+    // Debug: Log the result of the query
+    console.log('Query Result:', result.rows);
+
+    if (result.rows.length === 0) {
+      console.log('No matching user found for username:', username, 'and role: staff');
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const staff = result.rows[0];
+    console.log('Matching Staff User:', staff);
+
+    // Verify the password
+    const passwordMatch = await bcrypt.compare(password, staff.password_hash);
+    console.log('Password Match Result:', passwordMatch);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Generate a JWT token
+    const token = jwt.sign({ id: staff.id, role: staff.role }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });       
+
+    res.json({ message: 'Login successful', token });
+  } catch (err) {
+    console.error('Error during staff login:', err);
+    res.status(500).json({ error: 'Failed to log in' });
+  }
+});
+
+
+
+
+
 
 // Fetch all events
 app.get('/api/events', async (req, res) => {
@@ -97,9 +169,6 @@ app.get('/api/events', async (req, res) => {
 
 // Fetch saved events for a user
 app.get('/api/users/:id/saved-events', verifyToken, async (req, res) => {
-  if (result.rowCount === 0) {
-    return res.json([]); // Return an empty array instead of a 404
-  }  
   const { id } = req.params;
 
   if (req.user.id !== parseInt(id)) {
@@ -115,7 +184,7 @@ app.get('/api/users/:id/saved-events', verifyToken, async (req, res) => {
       [id]
     );
 
-    if (result.rowCount === 0) {
+    if (!result || result.rowCount === 0) {
       return res.status(404).json({ message: 'No saved events found for this user' });
     }
 
@@ -125,6 +194,7 @@ app.get('/api/users/:id/saved-events', verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch saved events.' });
   }
 });
+
 
 // Save an event for a user
 app.post('/api/users/:id/saved-events', verifyToken, async (req, res) => {
@@ -187,7 +257,21 @@ app.delete('/api/users/:id/saved-events/:eventId', verifyToken, async (req, res)
   }
 });
 
+
+// Verify Database Connection
+app.get('/api/debug-users', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM users');
+    console.log('Users Table:', result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error querying users table:', err);
+    res.status(500).send('Error querying users table');
+  }
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+

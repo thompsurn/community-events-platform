@@ -520,69 +520,88 @@ nav a:hover {
 
 /* Saved events cards */
 
-.event-card {
-  display: flex; /* Flex layout for horizontal alignment */
-  align-items: center; /* Vertically center-align date and details */
-  justify-content: space-between; /* Ensure space between sections */
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.saved-event-card {
+  display: flex;
+  align-items: flex-start;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
 }
 
-.event-date {
-  flex-shrink: 0; /* Prevent the date container from shrinking */
+.saved-event-date {
+  min-width: 70px;
   text-align: center;
-  margin-right: 16px; /* Add spacing between date and details */
+  background: #1e90ff;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 10px;
+  margin-right: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
-.event-date .day {
+.saved-event-day {
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.saved-event-date-number {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.saved-event-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 0;
+}
+
+.saved-event-title {
+  font-size: 18px;
+  color: #4a90e2;
+  margin: 0 0 10 0;
+}
+
+.saved-event-location {
+  font-size: 14px;
+  color: #888;
+  margin: 4px 0;
+}
+
+.save-event-links {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+.saved-event-calendar-link {
   font-size: 14px;
   font-weight: bold;
   color: #007bff;
+  text-decoration: underline;
+  margin-top: 10px;
+  margin-right: 10px;
 }
 
-.event-date .date {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.event-details {
-  flex-grow: 1; /* Allow details to take remaining space */
-}
-
-.event-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-}
-
-.event-location {
+.saved-event-details-link {
   font-size: 14px;
-  color: #666;
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: underline;
+  margin-top: 10px;
+  margin-right: 10px;
+
 }
 
-.event-actions {
-  margin-top: 8px;
-  display: flex;
-  gap: 8px; /* Add spacing between action buttons/links */
+.saved-event-details-link:hover {
+  text-decoration: underline;
 }
 
-.remove-event-button {
-  background-color: #dc3545;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.remove-event-button:hover {
-  background-color: #c82333;
-}
 
 
 
