@@ -181,6 +181,22 @@ app.get('/api/events', async (req, res) => {
   }
 });
 
+// Fetch a specific event by ID
+app.get('/api/events/:id', async (req, res) => {
+  const { id } = req.params; // Extract the event ID from the URL
+  try {
+    const result = await pool.query('SELECT * FROM events WHERE id = $1', [id]); // Query the database for the specific event
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Event not found' }); // Return 404 if no event is found
+    }
+    res.json(result.rows[0]); // Return the event details
+  } catch (err) {
+    console.error('Error fetching event:', err);
+    res.status(500).json({ error: 'Failed to fetch event details' }); // Handle server errors
+  }
+});
+
+
 // Fetch saved events for a user
 app.get('/api/users/:id/saved-events', verifyToken, async (req, res) => {
   const { id } = req.params;
