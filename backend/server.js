@@ -262,6 +262,26 @@ app.post('/api/users/:id/saved-events', verifyToken, async (req, res) => {
   }
 });
 
+
+// staff can delete an event
+app.delete('/api/events/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM events WHERE id = $1 RETURNING *', [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.status(200).json({ message: 'Event deleted successfully', event: result.rows[0] });
+  } catch (err) {
+    console.error('Error deleting event:', err);
+    res.status(500).json({ error: 'Failed to delete event.' });
+  }
+});
+
+
 // Delete a saved event for a user
 app.delete('/api/users/:id/saved-events/:eventId', verifyToken, async (req, res) => {
   const { id, eventId } = req.params;
@@ -286,6 +306,28 @@ app.delete('/api/users/:id/saved-events/:eventId', verifyToken, async (req, res)
     res.status(500).json({ error: 'Failed to remove event' });
   }
 });
+
+// create an event as staff
+app.post('/api/events', async (req, res) => {
+  try {
+    const { title, description, date, location, price } = req.body;
+
+    if (!title || !description || !date || !location || !price) {
+      return res.status(400).json({ error: 'All fields are required.' });
+    }
+
+    const result = await pool.query(
+      'INSERT INTO events (title, description, date, location, price) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [title, description, date, location, price]
+    );
+
+    res.status(201).json({ message: 'Event created successfully', event: result.rows[0] });
+  } catch (err) {
+    console.error('Error adding event:', err);
+    res.status(500).json({ error: 'Failed to add event.' });
+  }
+});
+
 
 
 // Verify Database Connection
