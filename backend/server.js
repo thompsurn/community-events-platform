@@ -4,7 +4,7 @@ const pool = require('./db'); // Import the database connection
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // Import JWT
 const { verifyToken, generateToken } = require('./middlewares/auth'); // Use modularized auth functions
-require('dotenv').config();
+require('dotenv').config({ path: '.env.dev' });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,7 +24,11 @@ app.get('/api/debug-users', async (req, res) => {
 
 
 // Apply Middleware
-app.use(cors()); // Enable CORS for all requests
+app.use(cors({
+  origin: '*', // Allow all origins (use cautiously in production)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+}));
 app.use(express.json()); // Middleware to parse JSON
 
 // Test API is running
@@ -68,7 +72,7 @@ app.post('/api/create-account', async (req, res) => {
   }
 });
 
-// Login Endpoint
+// login endpoint
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -90,13 +94,23 @@ app.post('/api/login', async (req, res) => {
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-    
-    res.json({ message: 'Login successful', token });
+
+    // Include the user object in the response (excluding sensitive fields)
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      },
+    });
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).json({ error: 'Failed to log in' });
   }
 });
+
 
 // Staff Login Endpoint
 app.post('/api/staff/login', async (req, res) => {
