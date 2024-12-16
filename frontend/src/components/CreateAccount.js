@@ -16,7 +16,7 @@ function CreateAccount() {
       return;
     }
     try {
-      await axios.post('http://localhost:5000/api/create-account', { username, password });
+      await axios.post('http://community-events-platform-production.up.railway.app/api/create-account', { username, password });
       navigate('/login');
     } catch (err) {
       console.error(err);

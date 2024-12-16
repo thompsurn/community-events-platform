@@ -24,12 +24,22 @@ app.get('/api/debug-users', async (req, res) => {
 });
 
 
-// Apply Middleware
+// Allow specific frontend origin
 app.use(cors({
-  origin: '*', // Allow all origins (use cautiously in production)
+  origin: [
+    'http://localhost:3000', // Local development frontend
+    'https://community-events-platform-production.up.railway.app' // Production frontend
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+  credentials: true // Allow cookies/credentials if needed
 }));
+
+// Handle preflight requests (OPTIONS method)
+app.options('*', cors());
+
+
+
 app.use(express.json()); // Middleware to parse JSON
 
 // Test API is running

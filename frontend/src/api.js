@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance with the base URL of your backend
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api', // Replace with your backend's base URL
+  baseURL: 'http://community-events-platform-production.up.railway.app/api', // Replace with your backend's base URL
 });
 
 // Fetch all events
@@ -24,7 +24,7 @@ export const fetchSavedEvents = async (userId) => {
     throw new Error('No token found');
   }
 
-  return axios.get(`http://localhost:5000/api/users/${userId}/saved-events`, {
+  return axios.get(`http://community-events-platform-production.up.railway.app/api/users/${userId}/saved-events`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -65,7 +65,7 @@ export const removeSavedEvent = async (userId, eventId) => {
     throw new Error('No token found'); // Ensure a token exists
   }
 
-  return axios.delete(`http://localhost:5000/api/users/${userId}/saved-events/${eventId}`, {
+  return axios.delete(`http:///api/users/${userId}/saved-events/${eventId}`, {
     headers: {
       Authorization: `Bearer ${token}`, // Add the token in the Authorization header
     },
@@ -76,7 +76,7 @@ export const removeSavedEvent = async (userId, eventId) => {
 export const staffLogin = async (username, password) => {
   console.log('Attempting login with:', { username, password }); // Debug: Request payload
   try {
-    const response = await axios.post('http://localhost:5000/api/staff/login', {
+    const response = await axios.post('http://community-events-platform-production.up.railway.app/api/staff/login', {
       username,
       password,
     });

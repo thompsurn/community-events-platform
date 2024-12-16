@@ -16,7 +16,7 @@ const EventDetailsScreen = () => {
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/events/${eventId}`);
+        const response = await fetch(`http://community-events-platform-production.up.railway.app/api/events/${eventId}`);
         const data = await response.json();
         setEvent(data);
       } catch (error) {
@@ -35,7 +35,7 @@ const EventDetailsScreen = () => {
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${user.id}/saved-events`, {
+      const response = await fetch(`http://community-events-platform-production.up.railway.app/api/users/${user.id}/saved-events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -22,7 +22,7 @@ function EditEvent() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/events/${id}`);
+        const response = await axios.get(`http://community-events-platform-production.up.railway.app/api/events/${id}`);
         setEvent(response.data); // Set the fetched event data
       } catch (err) {
         console.error(err);
@@ -48,7 +48,7 @@ function EditEvent() {
     setError('');
     setSuccessMessage('');
     try {
-      await axios.put(`http://localhost:5000/api/events/${id}`, event);
+      await axios.put(`http://community-events-platform-production.up.railway.app/api/events/${id}`, event);
       setSuccessMessage('Event updated successfully!');
       navigate('/staff-dashboard'); // Redirect to the staff dashboard
     } catch (err) {

@@ -14,7 +14,7 @@ const SignUpButton = ({ eventId }) => {
     }
   
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${user.id}/saved-events`, {
+      const response = await fetch(`http://community-events-platform-production.up.railway.app/api/users/${user.id}/saved-events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

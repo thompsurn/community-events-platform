@@ -13,7 +13,7 @@ function LoginPage() {
 
   const handleSignIn = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/login', { username, password });
+      const response = await axios.post('http://community-events-platform-production.up.railway.app/api/login', { username, password });
       const { token } = response.data;
       login(token); // Use the context login function
       navigate('/');

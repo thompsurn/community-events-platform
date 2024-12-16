@@ -23,7 +23,7 @@ function StaffLoginPage() {
     try {
       // Make API call to login endpoint
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/staff/login`,
+        `${process.env.REACT_APP_API_URL || 'http://community-events-platform-production.up.railway.app'}/api/staff/login`,
         { username, password }
       );
 
