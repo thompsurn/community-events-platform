@@ -1,10 +1,7 @@
 require('dotenv').config(); // Load environment variables
-const { Pool } = require('pg');
+const { Pool } = require('pg'); // Import Pool only once
 
 // Create a connection pool
-const { Pool } = require('pg');
-require('dotenv').config();
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -14,18 +11,17 @@ const pool = new Pool({
 
 module.exports = pool;
 
-
 // Test database connection
 (async () => {
   try {
     const client = await pool.connect();
     console.log('Database connection successful');
-    const result = await client.query('SELECT current_database(), current_schema();');
+    const result = await client.query(
+      'SELECT current_database(), current_schema();'
+    );
     console.log('Connected to:', result.rows[0]);
     client.release();
   } catch (error) {
     console.error('Database connection error:', error);
   }
 })();
-
-module.exports = pool; // Export the pool for use in other files
