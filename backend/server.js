@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // Import JWT
 const { verifyToken, generateToken } = require('./middlewares/auth'); // Use modularized auth functions
 require('dotenv').config({ path: '.env.dev' });
+console.log('Database URL:', process.env.DATABASE_URL); // Debugging line
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -170,16 +171,16 @@ app.post('/api/staff/login', async (req, res) => {
 // Fetch all events
 app.get('/api/events', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM events ORDER BY date ASC, id ASC');
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No events found' });
-    }
+    console.log('Fetching events from database...');
+    const result = await pool.query('SELECT * FROM events');
+    console.log('Query result:', result.rows);
     res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to fetch events' });
+  } catch (error) {
+    console.error('Error fetching events:', error.message);
+    res.status(500).json({ error: 'Failed to fetch events', details: error.message });
   }
 });
+
 
 // Fetch a specific event by ID
 app.get('/api/events/:id', async (req, res) => {
