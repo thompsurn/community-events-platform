@@ -28,10 +28,12 @@ app.get('/api/debug-users', async (req, res) => {
 
 // Allow specific frontend origin
 const allowedOrigins = [
-  'http://localhost:3000', 
+  'http://localhost:3000',
   'https://community-events-platform-production.up.railway.app',
-  'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app' // Add Vercel domain here
+  'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app',
+  'https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app' // Add this new domain
 ];
+
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -49,7 +51,13 @@ app.use(cors({
 
 
 // Handle preflight requests
-app.options('*', cors());
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.send();
+});
+
 
 
 
