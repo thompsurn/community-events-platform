@@ -1,15 +1,21 @@
 require('dotenv').config(); // Load environment variables
-const { Pool } = require('pg'); // Import Pool only once
+const { Pool } = require('pg');
 
-// Create a connection pool
+const isProduction = process.env.NODE_ENV === 'production';
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // Required for Railway-managed databases
-  },
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  ssl: isProduction
+    ? { rejectUnauthorized: false } // Use SSL in production (Railway)
+    : false, // No SSL locally
 });
 
 module.exports = pool;
+
 
 // Test database connection
 (async () => {
