@@ -1,11 +1,13 @@
+require('dotenv').config();
+console.log('Database URL:', process.env.DATABASE_URL); // Debugging line
+
 const express = require('express');
 const cors = require('cors'); // Import CORS
 const pool = require('./db'); // Import the database connection
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // Import JWT
 const { verifyToken, generateToken } = require('./middlewares/auth'); // Use modularized auth functions
-require('dotenv').config({ path: '.env.dev' });
-console.log('Database URL:', process.env.DATABASE_URL); // Debugging line
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,18 +27,25 @@ app.get('/api/debug-users', async (req, res) => {
 
 
 // Allow specific frontend origin
-app.use(cors({
-  origin: [
-    'http://localhost:3000', // Local development frontend
-    'https://community-events-platform-production.up.railway.app' // Production frontend
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-  credentials: true // Allow cookies/credentials if needed
-}));
+const allowedOrigins = ['http://localhost:3000', 'https://community-events-platform-production.up.railway.app'];
 
-// Handle preflight requests (OPTIONS method)
+// Handle preflight requests
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // Allow all origins (for dev only; restrict in prod)
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204); // Respond to preflight requests with 204 No Content
+  }
+  next();
+});
+
+
+
+// Handle preflight requests
 app.options('*', cors());
+
 
 
 
@@ -86,41 +95,55 @@ app.post('/api/create-account', async (req, res) => {
 // login endpoint
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
+  console.log('Login attempt with username:', username);
 
   try {
+    // Step 1: Query for user
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+    console.log('User query result:', result.rows);
 
     if (result.rowCount === 0) {
+      console.log('No user found with username:', username);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const user = result.rows[0];
+    console.log('Fetched User:', user);
+
+    // Step 2: Compare password hash
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
+    console.log('Password match result:', passwordMatch);
 
     if (!passwordMatch) {
+      console.log('Password mismatch for user:', username);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Generate a JWT token
+    // Step 3: Generate JWT token
+    console.log('Generating JWT token...');
+    console.log('Using JWT_SECRET:', process.env.JWT_SECRET); // Debugging line
+    
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET is missing!');
+    }
+
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
+    console.log('Generated Token:', token);
 
-    // Include the user object in the response (excluding sensitive fields)
     res.json({
       message: 'Login successful',
       token,
-      user: {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-      },
+      user: { id: user.id, username: user.username, role: user.role },
     });
   } catch (err) {
     console.error('Error during login:', err);
-    res.status(500).json({ error: 'Failed to log in' });
+    res.status(500).json({ error: 'Failed to log in', details: err.message });
   }
 });
+
+
 
 
 // Staff Login Endpoint

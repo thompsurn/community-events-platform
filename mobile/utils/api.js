@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API = axios.create({
-  baseURL: 'http://community-events-platform-production.up.railway.app/api', // Replace with your backend's base URL
+  baseURL: 'https://community-events-platform-production.up.railway.app/api', // Replace with your backend's base URL
 });
 
 API.interceptors.request.use(async (config) => {

@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import axios from 'axios';
 import '../styles/styles.css';
+const API_URL = process.env.REACT_APP_API_URL;
+
 
 function LoginPage() {
   const [username, setUsername] = useState('');
@@ -13,12 +15,12 @@ function LoginPage() {
 
   const handleSignIn = async () => {
     try {
-      const response = await axios.post('http://community-events-platform-production.up.railway.app/api/login', { username, password });
+      const response = await axios.post(`${API_URL}/login`, { username, password });
       const { token } = response.data;
       login(token); // Use the context login function
       navigate('/');
     } catch (err) {
-      console.error(err);
+      console.error('Login error:', err);
       setError('Invalid username or password');
     }
   };

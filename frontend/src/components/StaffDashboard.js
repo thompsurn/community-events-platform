@@ -19,7 +19,7 @@ function StaffDashboard() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('http://community-events-platform-production.up.railway.app/api/events');
+        const response = await axios.get('https://community-events-platform-production.up.railway.app/api/events');
         setEvents(response.data);
       } catch (err) {
         console.error(err);
@@ -43,7 +43,7 @@ function StaffDashboard() {
     setError('');
     setSuccessMessage('');
     try {
-      const response = await axios.post('http://community-events-platform-production.up.railway.app/api/events', newEvent);
+      const response = await axios.post('https://community-events-platform-production.up.railway.app/api/events', newEvent);
       setEvents((prev) => [...prev, response.data]);
       setNewEvent({
         title: '',
@@ -61,7 +61,7 @@ function StaffDashboard() {
 
   const handleDeleteEvent = async (id) => {
     try {
-      await axios.delete(`http://community-events-platform-production.up.railway.app/api/events/${id}`);
+      await axios.delete(`https://community-events-platform-production.up.railway.app/api/events/${id}`);
       setEvents((prev) => prev.filter((event) => event.id !== id));
       setSuccessMessage('Event deleted successfully!');
     } catch (err) {
