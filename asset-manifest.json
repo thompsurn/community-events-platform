@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/community-events-platform/frontend/static/css/main.cc1b8a9e.css",
+    "main.js": "/community-events-platform/frontend/static/js/main.4a3e6e0e.js",
+    "index.html": "/community-events-platform/frontend/index.html",
+    "main.cc1b8a9e.css.map": "/community-events-platform/frontend/static/css/main.cc1b8a9e.css.map",
+    "main.4a3e6e0e.js.map": "/community-events-platform/frontend/static/js/main.4a3e6e0e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cc1b8a9e.css",
+    "static/js/main.4a3e6e0e.js"
+  ]
+}
