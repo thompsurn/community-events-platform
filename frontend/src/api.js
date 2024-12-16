@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance with the base URL of your backend
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL, // Use environment variable for base URL
+  baseURL: process.env.REACT_APP_API_URL, // Make sure this points to the full URL with /api
 });
 
 // Fetch all events

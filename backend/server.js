@@ -30,7 +30,7 @@ app.get('/api/debug-users', async (req, res) => {
 const allowedOrigins = [
   'http://localhost:3000', 
   'https://community-events-platform-production.up.railway.app',
-  'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app' // Add Vercel frontend URL
+  'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app' // Add Vercel domain here
 ];
 
 app.use(cors({
