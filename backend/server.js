@@ -27,20 +27,24 @@ app.get('/api/debug-users', async (req, res) => {
 
 
 // Allow specific frontend origin
-const allowedOrigins = ['http://localhost:3000', 'https://community-events-platform-production.up.railway.app', 'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app' // Add your Vercel frontend URL here
+const allowedOrigins = [
+  'http://localhost:3000', 
+  'https://community-events-platform-production.up.railway.app',
+  'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app' // Add Vercel frontend URL
 ];
 
-// Handle preflight requests
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // Allow all origins (for dev only; restrict in prod)
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204); // Respond to preflight requests with 204 No Content
-  }
-  next();
-});
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 
 
 
