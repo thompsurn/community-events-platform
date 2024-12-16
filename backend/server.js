@@ -27,7 +27,8 @@ app.get('/api/debug-users', async (req, res) => {
 
 
 // Allow specific frontend origin
-const allowedOrigins = ['http://localhost:3000', 'https://community-events-platform-production.up.railway.app'];
+const allowedOrigins = ['http://localhost:3000', 'https://community-events-platform-production.up.railway.app', 'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app' // Add your Vercel frontend URL here
+];
 
 // Handle preflight requests
 app.use((req, res, next) => {
@@ -122,7 +123,7 @@ app.post('/api/login', async (req, res) => {
     // Step 3: Generate JWT token
     console.log('Generating JWT token...');
     console.log('Using JWT_SECRET:', process.env.JWT_SECRET); // Debugging line
-    
+
     if (!process.env.JWT_SECRET) {
       throw new Error('JWT_SECRET is missing!');
     }
