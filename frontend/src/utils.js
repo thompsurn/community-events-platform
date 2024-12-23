@@ -6,7 +6,7 @@ export const createGoogleCalendarLink = (event) => {
     const endDate = new Date(new Date(event.date).getTime() + 3600000)
       .toISOString()
       .replace(/[-:.]/g, '')
-      .slice(0, 15) + 'Z'; // Adds 1 hour to the event
+      .slice(0, 15) + 'Z';
   
     return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${description}&location=${location}`;
   };

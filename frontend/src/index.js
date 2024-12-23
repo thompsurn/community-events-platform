@@ -1,9 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client'; // Update to React 18's createRoot
+import ReactDOM from 'react-dom/client';
 import App from './App';
-import { AuthProvider } from './AuthContext'; // Assuming you have AuthProvider for context
+import { AuthProvider } from './AuthContext';
 
-const root = ReactDOM.createRoot(document.getElementById('root')); // Use createRoot instead of ReactDOM.render
+const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>

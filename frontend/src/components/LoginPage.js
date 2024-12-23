@@ -17,7 +17,7 @@ function LoginPage() {
     try {
       const response = await axios.post(`${API_URL}/login`, { username, password });
       const { token } = response.data;
-      login(token); // Use the context login function
+      login(token);
       navigate('/');
     } catch (err) {
       console.error('Login error:', err);

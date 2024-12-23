@@ -1,15 +1,14 @@
 import axios from 'axios';
 
-// Create an Axios instance with the base URL of your backend
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL, // Make sure this points to the full URL with /api
+  baseURL: process.env.REACT_APP_API_URL,
 });
 
 // Fetch all events
 export const fetchEvents = async () => {
   try {
     const response = await API.get('/events');
-    console.log('Fetched Events:', response.data); // Log the response
+    console.log('Fetched Events:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching events:', error.message);
@@ -19,7 +18,7 @@ export const fetchEvents = async () => {
 
 // Fetch saved events for a user
 export const fetchSavedEvents = async (userId) => {
-  const token = localStorage.getItem('token'); // Get the JWT token
+  const token = localStorage.getItem('token');
   if (!token) throw new Error('No token found');
 
   try {
@@ -35,7 +34,7 @@ export const fetchSavedEvents = async (userId) => {
 
 // API Function for Saving Events
 export const saveEvent = async (userId, eventId) => {
-  const token = localStorage.getItem('token'); // Get token from localStorage
+  const token = localStorage.getItem('token');
   if (!token) throw new Error('No token found');
 
   try {
@@ -53,7 +52,7 @@ export const saveEvent = async (userId, eventId) => {
 
 // API Function for Removing a Saved Event
 export const removeSavedEvent = async (userId, eventId) => {
-  const token = localStorage.getItem('token'); // Get token from localStorage
+  const token = localStorage.getItem('token');
   if (!token) throw new Error('No token found');
 
   try {
@@ -69,15 +68,15 @@ export const removeSavedEvent = async (userId, eventId) => {
 
 // API Function for Staff Login
 export const staffLogin = async (username, password) => {
-  console.log('Attempting login with:', { username, password }); // Debug: Request payload
+  console.log('Attempting login with:', { username, password });
   try {
     const response = await API.post('/staff/login', { username, password });
     console.log('Login response from server:', response.data);
-    return response.data; // Return the server's response (e.g., token)
+    return response.data;
   } catch (error) {
     console.error('Error during staff login:', error.message);
     throw error;
   }
 };
 
-export default API; // Export the Axios instance
+export default API;

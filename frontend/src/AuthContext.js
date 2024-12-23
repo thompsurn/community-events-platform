@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import {jwtDecode} from 'jwt-decode'; // Correctly import jwtDecode
+import {jwtDecode} from 'jwt-decode';
 
 const AuthContext = createContext();
 
@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        console.log('Decoded token:', decoded); // Debug log
+        console.log('Decoded token:', decoded);
         return decoded;
       } catch (err) {
         console.error('Failed to decode token:', err.message);
@@ -20,8 +20,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = (token) => {
     localStorage.setItem('token', token);
-    const decoded = jwtDecode(token); // Ensure this includes role
-    console.log('Decoded token during login:', decoded); // Debug log
+    const decoded = jwtDecode(token);
+    console.log('Decoded token during login:', decoded);
     setUser(decoded);
   };
 
@@ -29,11 +29,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('staffToken');
     setUser(null);
-    // Redirect after logout
     if (user?.role === 'staff') {
-      window.location.href = '/staff-login'; // Redirect staff to staff login
+      window.location.href = '/staff-login';
     } else {
-      window.location.href = '/login'; // Redirect users to login
+      window.location.href = '/login';
     }
   };
 

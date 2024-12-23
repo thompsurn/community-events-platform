@@ -4,10 +4,9 @@ import axios from 'axios';
 import '../styles/styles.css';
 
 function EditEvent() {
-  const { id } = useParams(); // Get the event ID from the route parameters
-  const navigate = useNavigate(); // For navigation after saving changes
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  // Initialize state variables for the event
   const [event, setEvent] = useState({
     title: '',
     description: '',
@@ -18,12 +17,11 @@ function EditEvent() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Fetch event data once when the component mounts
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(`https://community-events-platform-production.up.railway.app/api/events/${id}`);
-        setEvent(response.data); // Set the fetched event data
+        setEvent(response.data);
       } catch (err) {
         console.error(err);
         setError('Failed to fetch event details.');
@@ -31,9 +29,8 @@ function EditEvent() {
     };
 
     fetchEvent();
-  }, [id]); // Dependency array ensures this runs only when the `id` changes
+  }, [id]);
 
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEvent((prevEvent) => ({
@@ -42,7 +39,6 @@ function EditEvent() {
     }));
   };
 
-  // Handle form submission
   const handleSaveChanges = async (e) => {
     e.preventDefault();
     setError('');
@@ -50,7 +46,7 @@ function EditEvent() {
     try {
       await axios.put(`https://community-events-platform-production.up.railway.app/api/events/${id}`, event);
       setSuccessMessage('Event updated successfully!');
-      navigate('/staff-dashboard'); // Redirect to the staff dashboard
+      navigate('/staff-dashboard');
     } catch (err) {
       console.error(err);
       setError('Failed to update event. Please try again.');

@@ -71,7 +71,7 @@ function StaffDashboard() {
   };
 
   const handleEditEvent = (id) => {
-    navigate(`/events/${id}/edit`); // Navigate to the specific event page with editing options
+    navigate(`/events/${id}/edit`);
   };
 
   const handleViewEvent = (id) => {

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../AuthContext'; // Import AuthContext to access logged-in user
+import { useAuth } from '../AuthContext';
 import { saveEvent } from '../api';
 import '../styles/styles.css';
 
 function EventDetails({ events }) {
-  const { id } = useParams(); // Get event ID from the URL
-  const { user } = useAuth(); // Get logged-in user details
+  const { id } = useParams();
+  const { user } = useAuth();
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const event = events.find((e) => e.id === Number(id)); // Find event by ID
+  const event = events.find((e) => e.id === Number(id));
 
   if (!event) {
     return <p className="error-message">Event not found</p>;
@@ -22,9 +22,9 @@ function EventDetails({ events }) {
     }
 
     try {
-      await saveEvent(user.id, event.id); // Use the logged-in user's ID
+      await saveEvent(user.id, event.id);
       setMessage('Event successfully added to your saved events page!');
-      setError(''); // Clear any previous error
+      setError('');
     } catch (err) {
       console.error('Error signing up for event:', err);
       if (err.response && err.response.status === 400) {
@@ -45,7 +45,7 @@ function EventDetails({ events }) {
     const endDate = new Date(new Date(event.date).getTime() + 3600000)
       .toISOString()
       .replace(/[-:.]/g, '')
-      .slice(0, 15) + 'Z'; // Adds 1 hour to the event
+      .slice(0, 15) + 'Z';
 
     return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${description}&location=${location}`;
   };

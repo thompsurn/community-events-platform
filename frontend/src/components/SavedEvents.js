@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { fetchSavedEvents, removeSavedEvent } from '../api';
 import '../styles/styles.css';
-import { useAuth } from '../AuthContext'; // Ensure you import the user's context
+import { useAuth } from '../AuthContext';
 import { createGoogleCalendarLink } from '../utils';
 
 function SavedEvents() {
   const [savedEvents, setSavedEvents] = useState([]);
   const [error, setError] = useState(null);
-  const { user } = useAuth(); // Use the logged-in user's context
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadSavedEvents = async () => {
@@ -17,18 +17,18 @@ function SavedEvents() {
       }
   
       try {
-        const response = await fetchSavedEvents(user.id); // Call the API
+        const response = await fetchSavedEvents(user.id);
         if (Array.isArray(response)) {
-          setSavedEvents(response); // If response is already an array
+          setSavedEvents(response);
         } else if (response && Array.isArray(response.data)) {
-          setSavedEvents(response.data); // Handle cases where data is wrapped in an object
+          setSavedEvents(response.data);
         } else {
           console.error('Invalid data: response is not an array or does not contain data', response);
-          setSavedEvents([]); // Fallback to empty array
+          setSavedEvents([]);
         }
       } catch (err) {
         if (err.response && err.response.status === 404) {
-          setSavedEvents([]); // No saved events
+          setSavedEvents([]);
         } else {
           console.error('Failed to fetch saved events:', err);
           setError('Could not load saved events.');
@@ -44,7 +44,7 @@ function SavedEvents() {
 
   const handleRemoveEvent = async (eventId) => {
     try {
-      await removeSavedEvent(user.id, eventId); // Replace 'user.id' with the actual logged-in user ID
+      await removeSavedEvent(user.id, eventId);
       setSavedEvents(savedEvents.filter((event) => event.id !== eventId));
     } catch (err) {
       console.error('Failed to remove event:', err);
@@ -65,13 +65,11 @@ function SavedEvents() {
     );
   }
   const groupEventsByMonth = (events) => {
-    // Check if events is a valid array
     if (!Array.isArray(events)) {
       console.error('Invalid data: events is not an array', events);
-      return []; // Return an empty array to prevent further errors
+      return [];
     }
   
-    // Group events by month using reduce
     const grouped = events.reduce((acc, event) => {
       const eventDate = new Date(event.date);
       const month = eventDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
@@ -80,7 +78,6 @@ function SavedEvents() {
       return acc;
     }, {});
   
-    // Convert grouped events into an array of objects
     return Object.entries(grouped).map(([month, events]) => ({ month, events }));
   };
   
