@@ -1,12 +1,11 @@
 require('dotenv').config();
-console.log('Database URL:', process.env.DATABASE_URL); // Debugging line
 
 const express = require('express');
-const cors = require('cors'); // Import CORS
-const pool = require('./db'); // Import the database connection
+const cors = require('cors');
+const pool = require('./db');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken'); // Import JWT
-const { verifyToken, generateToken } = require('./middlewares/auth'); // Use modularized auth functions
+const jwt = require('jsonwebtoken');
+const { verifyToken, generateToken } = require('./middlewares/auth');
 
 
 const app = express();
@@ -14,6 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 
 // Debugging endpoint for database connection
+/*
 app.get('/api/debug-users', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM users');
@@ -24,6 +24,7 @@ app.get('/api/debug-users', async (req, res) => {
     res.status(500).send('Error querying users table');
   }
 });
+*/
 
 
 // Allow specific frontend origin
@@ -31,7 +32,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://community-events-platform-production.up.railway.app',
   'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app',
-  'https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app' // Add this new domain
+  'https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app'
 ];
 
 
@@ -61,8 +62,8 @@ app.options('*', (req, res) => {
 
 
 
-
-app.use(express.json()); // Middleware to parse JSON
+// Middleware to parse JSON
+app.use(express.json());
 
 // Test API is running
 app.get('/', (req, res) => {
@@ -111,30 +112,19 @@ app.post('/api/login', async (req, res) => {
   console.log('Login attempt with username:', username);
 
   try {
-    // Step 1: Query for user
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-    console.log('User query result:', result.rows);
 
     if (result.rowCount === 0) {
-      console.log('No user found with username:', username);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const user = result.rows[0];
-    console.log('Fetched User:', user);
 
-    // Step 2: Compare password hash
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
-    console.log('Password match result:', passwordMatch);
 
     if (!passwordMatch) {
-      console.log('Password mismatch for user:', username);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
-    // Step 3: Generate JWT token
-    console.log('Generating JWT token...');
-    console.log('Using JWT_SECRET:', process.env.JWT_SECRET); // Debugging line
 
     if (!process.env.JWT_SECRET) {
       throw new Error('JWT_SECRET is missing!');
@@ -143,7 +133,6 @@ app.post('/api/login', async (req, res) => {
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-    console.log('Generated Token:', token);
 
     res.json({
       message: 'Login successful',

@@ -3,7 +3,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware to verify token and attach user info
 const verifyToken = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1]; // Extract token from 'Bearer <token>'
+  const token = req.headers['authorization']?.split(' ')[1];
 
   if (!token) {
     console.log('No token provided');
@@ -13,8 +13,8 @@ const verifyToken = (req, res, next) => {
   try {
     const verified = jwt.verify(token, JWT_SECRET);
     console.log('Decoded Token:', verified);
-    req.user = verified; // Attach user info to request
-    next(); // Proceed to the next middleware
+    req.user = verified;
+    next();
   } catch (err) {
     console.error('Token verification failed:', err.message);
     return res.status(400).json({ error: 'Invalid Token' });

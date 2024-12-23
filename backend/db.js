@@ -4,7 +4,7 @@ require('dotenv').config();
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false, // Necessary for Railway Postgres
+    rejectUnauthorized: false,
   },
 });
 
@@ -12,6 +12,7 @@ module.exports = pool;
 
 
 // Test database connection
+/*
 (async () => {
   try {
     const client = await pool.connect();
@@ -25,3 +26,4 @@ module.exports = pool;
     console.error('Database connection error:', error);
   }
 })();
+*/
