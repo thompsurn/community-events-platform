@@ -5,7 +5,6 @@ import LoginPage from './components/LoginPage';
 import SavedEvents from './components/SavedEvents';
 import EventDetails from './components/EventDetails';
 import EditEvent from './components/EditEvent';
-import StaffLoginPage from './components/StaffLoginPage';
 import StaffDashboard from './components/StaffDashboard';
 import CreateAccount from './components/CreateAccount';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -78,7 +77,6 @@ function App() {
 
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/staff-login" element={<StaffLoginPage />} />
         <Route path="/create-account" element={<CreateAccount />} />
         <Route
           path="/staff-dashboard"

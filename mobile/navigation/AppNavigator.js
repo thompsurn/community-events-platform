@@ -9,7 +9,6 @@ import SavedEventsScreen from '../screens/SavedEventsScreen';
 import EventDetailsScreen from '../screens/EventDetailsScreen';
 import LoginScreen from '../screens/LoginScreen';
 import CreateAccountScreen from '../screens/CreateAccountScreen';
-import StaffLoginScreen from '../screens/StaffLoginScreen';
 import Theme from '../styles/Theme';
 
 const Stack = createStackNavigator();
@@ -92,11 +91,6 @@ const AppNavigator = () => {
               name="CreateAccount"
               component={CreateAccountScreen}
               options={{ title: 'Create Account' }}
-            />
-            <Stack.Screen
-              name="StaffLogin"
-              component={StaffLoginScreen}
-              options={{ title: 'Staff Login' }}
             />
           </>
         )}
