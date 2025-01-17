@@ -47,32 +47,85 @@ function CreateAccount() {
   };
 
   return (
-    <div className="container">
-      <h1>Create an Account</h1>
-      <form onSubmit={handleCreateAccount}>
+    <div style={styles.container}>
+      <h1 style={styles.heading}>Create an Account</h1>
+      <form onSubmit={handleCreateAccount} style={styles.form}>
         <input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          style={styles.input}
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          style={styles.input}
         />
         <input
           type="password"
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          style={styles.input}
         />
-        <button type="submit">Create Account</button>
+        <button type="submit" style={styles.button}>Create Account</button>
       </form>
-      {error && <p>{error}</p>}
+      {error && <p style={styles.error}>{error}</p>}
     </div>
   );
 }
+
+const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8f9fa',
+    padding: '20px',
+  },
+  heading: {
+    marginBottom: '20px',
+    color: '#343a40',
+    fontSize: '24px',
+    textAlign: 'center',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    maxWidth: '400px',
+  },
+  input: {
+    marginBottom: '15px',
+    padding: '10px',
+    fontSize: '16px',
+    borderRadius: '4px',
+    border: '1px solid #ced4da',
+    outline: 'none',
+  },
+  button: {
+    padding: '10px',
+    fontSize: '16px',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s',
+  },
+  buttonHover: {
+    backgroundColor: '#0056b3',
+  },
+  error: {
+    marginTop: '10px',
+    color: 'red',
+    fontSize: '14px',
+    textAlign: 'center',
+  },
+};
 
 export default CreateAccount;
