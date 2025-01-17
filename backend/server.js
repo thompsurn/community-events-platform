@@ -32,7 +32,8 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://community-events-platform-production.up.railway.app',
   'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app',
-  'https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app'
+  'https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app',
+  'https://community-events-platform-17jhkwnqn-elliot-thompsons-projects.vercel.app'
 ];
 
 
