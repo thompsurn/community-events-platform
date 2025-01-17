@@ -53,9 +53,9 @@ The platform fulfils the following functionality:
 
 ## Publicly Hosted Application
 
-The application is hosted on Vercel and is publicly accessible. However, **users will need to follow Vercel's signup/sign-in process the first time they use it to ensure they can access the application**.
+The application is hosted on Vercel and is publicly accessible.
 
-- **Login screen**: [https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app/login](https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app/login)
+- **Login screen**: [https://community-events-platform-omega.vercel.app/login](https://community-events-platform-omega.vercel.app/login)
 
 ### Test Login Details
 
