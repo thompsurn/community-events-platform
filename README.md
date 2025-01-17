@@ -2,6 +2,22 @@
 
 A platform designed to bring community members together by providing a centralised hub for discovering, creating, and managing events.
 
+
+## Table of Contents
+
+1. [Project Overview](#project-overview)
+2. [Features](#features)
+3. [Tech Stack](#tech-stack)
+4. [Additional Features](#additional-features)
+5. [Publicly Hosted Application](#publicly-hosted-application)
+6. [Test Login Details](#test-login-details)
+7. [Requirements and Usage](#requirements-and-usage)
+8. [Extensions Under Development](#extensions-under-development)
+9. [How to Run the Project](#how-to-run-the-project)
+10. [Contributing](#contributing)
+
+
+
 ## Project Overview
 
 This project aims to build a web application where users can browse and sign up for events. Staff members can create and manage events, offering an intuitive interface for event management and user interaction. The **mobile app** for this platform is currently under development, so this submission focuses on the **frontend** and **backend** of the web application.
