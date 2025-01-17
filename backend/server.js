@@ -33,13 +33,18 @@ const allowedOrigins = [
   'https://community-events-platform-production.up.railway.app',
   'https://community-events-platform-mixyxu2fd-elliot-thompsons-projects.vercel.app',
   'https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app',
-  'https://community-events-platform-17jhkwnqn-elliot-thompsons-projects.vercel.app'
+  'https://community-events-platform-17jhkwnqn-elliot-thompsons-projects.vercel.app',
+  /\.vercel\.app$/
 ];
 
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.some((allowedOrigin) =>
+      typeof allowedOrigin === 'string'
+        ? allowedOrigin === origin
+        : allowedOrigin instanceof RegExp && allowedOrigin.test(origin)
+    )) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
