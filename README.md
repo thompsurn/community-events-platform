@@ -55,8 +55,7 @@ The platform fulfils the following functionality:
 
 The application is hosted on Vercel and is publicly accessible. However, **users will need to follow Vercel's signup/sign-in process the first time they use it to ensure they can access the application**.
 
-- **Normal User Login**: [https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app/login](https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app/login)
-- **Staff Login**: [https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app/staff-login](https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app/staff-login)
+- **Login screen**: [https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app/login](https://community-events-platform-53wit29r7-elliot-thompsons-projects.vercel.app/login)
 
 ### Test Login Details
 
